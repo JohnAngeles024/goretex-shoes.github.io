@@ -1,0 +1,133 @@
+@charset "UTF-8";
+
+// --------------------------------------
+// 	メディアクエリを呼び出す
+// 		@include mediascreen(sp){
+// 			プロパティ名: 値;
+// 		}
+// 		@include mediascreen(pc){
+// 			プロパティ名: 値;
+// 		}
+// 		@include mediascreen(tb){
+// 			プロパティ名: 値;
+// 		}
+// 		ブレイクポイントの変更は_global.scss内の$screenを調整する。
+// --------------------------------------
+//
+@mixin mq($breakpoint: sp){
+	@media #{map-get($screen, $breakpoint)}{
+		@content;
+	}
+}
+
+@include mq(pc){
+	.view--pc{
+		display: block;
+	}
+	.view--sp{
+		display: none;
+	}
+}
+@include mq{
+	.view--pc{
+		display: none;
+	}
+	.view--sp{
+		display: block;
+	}
+}
+
+// --------------------------------------
+// 	margin/paddingをパーセントに変換
+// 		per( コンテンツ幅など , 値 );
+// 		padding: per( 10 20 30 40 , 980);
+// 		第一引数は半角スペースで区切る。
+// 		第二引数には分母となる値を入れる。初期値はwrapperの幅
+// --------------------------------------
+//
+@function per( $values, $width: $contentWidth ) {
+	$length: length($values);
+	$array: ();
+	@for $i from 1 through $length +1 {
+		@if $i > 1 {
+			@if type-of( nth($values, $i - 1) ) == 'number' and nth($values, $i - 1) == 0{
+				$array: append($array, 0, );
+			}@elseif type-of( nth($values, $i - 1) ) == 'number' and nth($values, $i - 1) > 1{
+				$value: format( nth($values, $i - 1) / $width );
+				$array: append($array, $value, );
+			}@elseif nth($values, $i - 1) == auto{
+				$array: append($array, auto , );
+			}
+		}
+	}
+	@return $array;
+}
+
+// --------------------------------------
+// 	vwに変換[スマホ用]
+// 		vw( 値 );
+// 		margin: vw( 30 auto 60 );
+// 		引数は半角スペースで区切る。
+// --------------------------------------
+//
+@function vw($values) {
+	$screen: $spPageWidth;
+	$length: length($values);
+	$array: ();
+	@for $i from 1 through $length +1 {
+		@if $i > 1 {
+			@if type-of( nth($values, $i - 1) ) == 'number' and nth($values, $i - 1) > 1{
+				$value: format( nth($values, $i - 1) / $screen , vw );
+				$array: append($array, $value, );
+			}@elseif type-of( nth($values, $i - 1) ) == 'number' and nth($values, $i - 1) == 0{
+				$array: append($array, 0, );
+			}@elseif nth($values, $i - 1) == auto{
+				$array: append($array, auto , );
+			}
+		}
+	}
+	@return $array;
+}
+
+
+// --------------------------------------
+// 	小数点以下を四捨五入して余分なところは切り捨てる
+// 		decimalRound( 処理したい値もしくは式, 小数点以下の桁数 )
+// 		decimalRound( 0.234643242462, 1 )
+// 		decimalRound( 20 / 70, 1 )
+// --------------------------------------
+//
+@function decimalRound( $value, $n ){
+	$squared: 10;
+	@for $i from 1 to $n{
+		$squared: $squared * 10;
+	}
+	@return ( round( $value * $squared ) / $squared );
+}
+
+// --------------------------------------
+// 	単位を消して数値のみを出力
+// 		stripUnit(20px)
+// --------------------------------------
+//
+@function stripUnit( $value ) {
+	@if type-of($value) == 'number' and not unitless($value) {
+		@return $value / ($value * 0 + 1);
+	}
+	@return $value;
+}
+
+// --------------------------------------
+// 	小数を整数に桁上げ
+// 	format( $formula, per/vw )
+// --------------------------------------
+//
+@function format( $formula, $format: per ){
+	@if $format == per{
+		@return decimalRound( stripUnit( $formula ) * 100 , 1 ) * 1%;
+	}@elseif $format == vw{
+		@return #{decimalRound( stripUnit( $formula ) * 100 , 1 )}vw;
+	}@else{
+		@return decimalRound( stripUnit( $formula ) * 100 , 1 );
+	}
+}

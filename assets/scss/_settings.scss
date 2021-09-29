@@ -1,0 +1,22 @@
+@charset "UTF-8";
+//--------------------------------------
+//　　　変数の定義
+//--------------------------------------
+
+// noto_font
+$noto-sans_font: "Noto Sans JP","Yu Gothic Medium", "游ゴシック Medium","YuGothic", "游ゴシック体", "ヒラギノ角ゴ Pro W3", "メイリオ", "sans-serif";
+$noto-serif_font: "Noto Serif JP","mincho", "游明朝体","Yu Mincho", "YuMincho", "メイリオ","serif";
+
+// PCコンテンツ幅
+$contentWidth: 980;
+
+// スマホ画面幅(デザインデータ)
+$spPageWidth: 768;
+
+// メディアクエリ
+$screen: (
+	'sp': 'screen and (max-width: 768px)',
+	'pc' : 'screen and (min-width: 769px)',
+	'spc' : 'screen and (min-width: #{$spPageWidth +1}px) and (max-width: 1180px)',
+	'tb' : 'screen and (min-width: #{$spPageWidth +1}px) and (max-width: 768px)',
+) !default;

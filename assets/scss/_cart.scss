@@ -1,0 +1,23 @@
+@charset "UTF-8";
+
+.page{
+	.ajax_area{
+		.preset_price_area{
+			color:red;
+		}
+		a.cartinbtn{
+			width: 80%;
+			background-color: #000;
+			margin:5px auto 0;
+			@include mq{
+				width:100%;
+			}
+		}
+		.stock_exist{
+			width: 80%;
+			@include mq{
+				width:100%;
+			}
+		}
+	}
+}
